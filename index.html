@@ -55,7 +55,7 @@
     <div class="container">
         <h1>test de clic</h1>
         <div class="info">
-            <p>Temps restant: <span id="time">25</span>s</p>
+            <p>Temps restant: <span id="time">60</span>s</p>
             <p>Score: <span id="score">0</span></p>
         </div>
         <div id="gameArea">
@@ -66,7 +66,7 @@
     <script>
         
         let score = 0;
-        let time = 25;
+        let time = 60;
         let gameInterval;
         let target = document.getElementById('target');
         let timeDisplay = document.getElementById('time');
@@ -75,7 +75,7 @@
 
         function startGame() {
             score = 0;
-            time = 25;
+            time = 60;
             scoreDisplay.textContent = score;
             timeDisplay.textContent = time;
             target.style.display = 'block';
