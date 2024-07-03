@@ -63,8 +63,35 @@
         </div>
         <button id="startButton">Démarrer le test</button>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        
+        const { createClient } = supabase
+        const _supabase = createClient('https://roirqsszfbbeeldcnipi.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvaXJxc3N6ZmJiZWVsZGNuaXBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjAwMDc2MjYsImV4cCI6MjAzNTU4MzYyNn0.i6KmtJr3C5047eeV1TVwFbLswVD0DkCeD193affH_kk');
+
+        let scores = [];
+        async function getScores() {
+            const { data, error } = await _supabase
+                .from('scores')
+                .select();
+
+            scores = data
+        }
+        getScores();
+
+        async function submitScore() {
+            // const btn = document.getElementById('button');
+
+            // btn.setAttribute('disabled', true);
+            // let score = document.getElementById('score').value;
+            console.log(score);
+            if (score && score.length && score > 0 && !isNaN(score)) {
+                const { error } = await _supabase
+                    .from('scores')
+                    .insert({ score });
+            }
+            // btn.removeAttribute('disabled');
+        }
+
         let score = 0;
         let time = 60;
         let gameInterval;
