@@ -16,6 +16,10 @@
             color: #000000;
         }
 
+        main {
+            display: flex;
+        }
+
         .container {
             text-align: center;
         }
@@ -28,6 +32,11 @@
             margin: 20px auto;
             border: 2px solid #f40303;
         }
+
+        #leaderboard {
+            margin: 20px;
+        }
+
 
         #target {
             position: absolute;
@@ -58,9 +67,12 @@
             <p>Temps restant: <span id="time"></span>s</p>
             <p>Score: <span id="score">0</span></p>
         </div>
-        <div id="gameArea">
-            <div id="target"></div>
-        </div>
+        <main>
+            <div id="gameArea">
+                <div id="target"></div>
+            </div>
+            <div id="leaderboard"></div>
+        </main>
         <button id="startButton">Démarrer le test</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -68,29 +80,33 @@
         const { createClient } = supabase
         const _supabase = createClient('https://roirqsszfbbeeldcnipi.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvaXJxc3N6ZmJiZWVsZGNuaXBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjAwMDc2MjYsImV4cCI6MjAzNTU4MzYyNn0.i6KmtJr3C5047eeV1TVwFbLswVD0DkCeD193affH_kk');
 
-        let scores = [];
         async function getScores() {
             const { data, error } = await _supabase
                 .from('scores')
                 .select();
-
-            scores = data
+            return data;
         }
-        getScores();
 
-        async function submitScore() {
-            // const btn = document.getElementById('button');
-
-            // btn.setAttribute('disabled', true);
-            // let score = document.getElementById('score').value;
-            console.log(score);
-            if (score && score.length && score > 0 && !isNaN(score)) {
+        async function submitScore(score) {
+            score = parseInt(score);
+            if (score && score > 0 && !isNaN(score)) {
                 const { error } = await _supabase
                     .from('scores')
                     .insert({ score });
             }
-            // btn.removeAttribute('disabled');
         }
+
+        async function feedLeaderboard() {
+            let scores = await getScores();
+            const leaderboard = document.getElementById('leaderboard');
+            scores = scores.map(row => row.score);
+            scores = scores.sort().reverse();
+            scores.map((score) => {
+                leaderboard.innerHTML += score + '<br>';
+            });
+        }
+
+        window.onload = feedLeaderboard;
 
         let score = 0;
         let time = 60;
@@ -121,9 +137,10 @@
         }
 
         function endGame() {
+            submitScore(score);
             clearInterval(gameInterval);
             target.style.display = 'none';
-            alert('Temps écoulé ! Votre score est : ' + score);
+            // alert('Temps écoulé ! Votre score est : ' + score);
             startButton.disabled = false;
         }
 
